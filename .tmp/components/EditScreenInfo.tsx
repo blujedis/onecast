@@ -40,6 +40,7 @@ export default function EditScreenInfo({ path }: { path: string }) {
       </View>
     </View>
   );
+  
 }
 
 function handleHelpPress() {
