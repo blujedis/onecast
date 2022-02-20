@@ -3,16 +3,18 @@ import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { ThemeName } from '../theme';
-import useColorScheme from './useColorScheme';
+import { useColorScheme } from 'react-native';
+
 import useStorage from './useStorage';
+import { ThemeMode } from '../providers/theme';
 
 export default function useCachedResources() {
 
   const storage = useStorage();
-  const scheme = useColorScheme();
+  const deviceScheme = useColorScheme();
 
-  const [isLoadingComplete, setLoadingComplete] = useState(false);
-  const [storedTheme, setStoredTheme] = useState({ theme: 'default' as ThemeName, mode: scheme.mode });
+  const [initialized, setInitizlized] = useState(false);
+  const [theme, setTheme] = useState({ name: 'default' as ThemeName, mode: deviceScheme as ThemeMode });
 
 
   // Load any resources or data that we need prior to rendering the app
@@ -22,10 +24,6 @@ export default function useCachedResources() {
 
       try {
 
-        storage.setDefaults({
-          theme: 'default'
-        });
-
         SplashScreen.preventAutoHideAsync();
 
         // Load fonts
@@ -34,23 +32,28 @@ export default function useCachedResources() {
           'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
         });
 
-        const themeStr = await storage.get('theme');
+        // Get the stored theme.
+        const storageTheme = await storage.get('theme');
 
-        if (themeStr) {
-          const [theme, mode] = themeStr.split(':');
-          console.log(theme, mode);
-          setStoredTheme({ theme, mode: mode || scheme.mode });
-        }
+        const loadedTheme = storageTheme
+          ? { ...theme, ...storageTheme }
+          : { ...theme, name: 'default', mode: deviceScheme };
+
+        // Update the theme in storage.
+
+        await storage.set('theme', loadedTheme);
+        setTheme(loadedTheme);
 
       }
 
+      // We might want to provide this error 
+      //information to an error reporting service
       catch (e) {
-        // We might want to provide this error information to an error reporting service
         console.warn(e);
       }
 
       finally {
-        setLoadingComplete(true);
+        setInitizlized(true);
         SplashScreen.hideAsync();
       }
 
@@ -60,5 +63,5 @@ export default function useCachedResources() {
 
   }, []);
 
-  return { isLoadingComplete, storedTheme };
+  return { initialized, theme };
 }

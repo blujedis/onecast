@@ -6,13 +6,9 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { FontAwesome } from '@expo/vector-icons';
-import { ColorSchemeName, Pressable } from 'react-native';
-import Colors from '../constants/Colors';
-import useColorScheme from '../hooks/useColorScheme';
-import { useTheme } from '../hooks/useTheme';
 import { MainStackParamList, RootStackParamList, RootStackScreenProps } from './types';
 import { ThemeName } from '../theme';
+import { useTheme } from '../providers/theme';
 
 import MainScreen from '../screens/main';
 import ModalScreen from '../screens/modal';
@@ -57,9 +53,9 @@ function RootNavigator() {
   );
 }
 
-export default function Navigation({ theme, mode }: { theme?: ThemeName, mode?: 'light' | 'dark' }) {
+export default function Navigation() {
 
-  const activeTheme = useTheme(theme, mode);
+  const activeTheme = useTheme();
 
   const navTheme = {
     dark: activeTheme.dark,

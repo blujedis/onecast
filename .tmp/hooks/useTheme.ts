@@ -13,9 +13,12 @@ import { ThemeName, Theme, getTheme } from '../theme';
 export const useTheme = (name: ThemeName = 'default', mode?: ColorSchemeName) => {
   const scheme = useColorScheme();
   const storage = useStorage();
-  const theme = getTheme(name, mode || scheme.mode) as Theme;
-  return {
+  const baseTheme = getTheme(name, mode || scheme.mode) as Theme;
+  const theme = {
     name,
-    ...theme
+    ...baseTheme
+  }
+  return {
+    theme
   };
 };
