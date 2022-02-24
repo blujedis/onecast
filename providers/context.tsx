@@ -1,38 +1,34 @@
 import { createContext, FC, useContext, useState } from 'react';
-import { useColorScheme} from 'react-native';
+import { useColorScheme } from 'react-native';
 import { ThemeName, Theme } from '../theme';
 import { getTheme } from '../theme';
 import useStorage from '../hooks/useStorage';
 
 export type ThemeMode = 'light' | 'dark';
 
-export interface IThemeContext {
-  name: ThemeName;
+export interface IContext {
   theme: Theme;
-  mode: ThemeMode;
-  dark: boolean;
-  setMode: (mode: ThemeMode) => void;
+  setThemeMode: (mode: ThemeMode) => void;
   setTheme: (name: ThemeName, mode?: ThemeMode) => void;
+  // showToast: (message: string, variant?: any) => void;
+  // hideToast: () => void;
 }
 
-export interface IThemeOptions {
+export interface IContextOptions {
   theme?: ThemeName;
   mode?: ThemeMode;
 }
 
 const defaultState = {
-  name: 'default' as ThemeName,
   theme: getTheme('default', 'light'),
-  mode: 'light' as 'light' | 'dark',
-  dark: false
 };
 
-const ThemeContext = 
-  createContext<IThemeContext>(defaultState as Required<IThemeContext>);
+const Context =
+  createContext<IContext>(defaultState as Required<IContext>);
 
-ThemeContext.displayName = 'ThemeContext';
+Context.displayName = 'ThemeContext';
 
-const ThemeProvider: FC<IThemeOptions> = ({ theme: themeName, mode, children }) => {
+const ThemeProvider: FC<IContextOptions> = ({ theme: themeName, mode, children }) => {
 
   const initName = themeName || 'default';
   const deviceMode = useColorScheme();
@@ -40,35 +36,33 @@ const ThemeProvider: FC<IThemeOptions> = ({ theme: themeName, mode, children }) 
   const storage = useStorage();
 
   const [theme, setTheme] = useState({ name: initName, mode: initMode });
+  // const [toast, setToast] = useState({ } as {visible: boolean, message: string, variant?: string})
 
-  const context: IThemeContext = {
-    name: theme.name,
-    mode: theme.mode,
-    dark: theme.mode === 'dark',
+  const context: IContext = {
     get theme() {
-      return getTheme(theme.name, theme.mode);
+      return getTheme(theme.name, theme.mode) as any;
     },
-    setMode: (mode) => {
-      const newTheme = { name: theme.name, mode };
+    setThemeMode: (mode) => {
+      const newTheme = { name: theme.name, mode, deviceMode };
       setTheme(newTheme);
       storage.set('theme', newTheme);
     },
     setTheme: async (name, mode = theme.mode) => {
-      const newTheme = { ...theme, name, mode }
+      const newTheme = { ...theme, name, mode, deviceMode }
       setTheme(newTheme);
       storage.set('theme', newTheme);
     }
   };
 
   return (
-    <ThemeContext.Provider value={context}>
+    <Context.Provider value={context}>
       {children}
-    </ThemeContext.Provider>
+    </Context.Provider>
   );
 
 };
 
-const useThemeContext = () => useContext(ThemeContext);
+const useThemeContext = () => useContext(Context);
 
 const useTheme = () => {
   return useThemeContext().theme;

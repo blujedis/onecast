@@ -1,5 +1,7 @@
+import camelcase from 'camelcase';
 
 const colors = {
+
   transparent: 'transparent',
   black: '#000000',
   white: '#ffffff',
@@ -279,7 +281,13 @@ const colors = {
   brown700: '#5d4037',
   brown800: '#4e342e',
   brown900: '#3e2723'
-  
-};
+}
 
-export default colors;
+const obj = {};
+
+for (const k in colors) {
+  const key = camelcase(k);
+  obj[key] = colors[k]
+}
+
+console.log(obj);

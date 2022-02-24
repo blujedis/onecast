@@ -1,5 +1,5 @@
-import { useThemeContext } from '../providers/theme';
-import SwitchComponent from './switch';
+import { useThemeContext } from '../providers/context';
+import SwitchComponent from './elments/switch';
 
 const ModeComponent = () => {
 
@@ -7,7 +7,7 @@ const ModeComponent = () => {
 
   return (
     <SwitchComponent
-      onChange={(isDark) => ctx.setMode(isDark ? 'dark' : 'light')}
+      onChange={(isDark) => ctx.setThemeMode(isDark ? 'dark' : 'light')}
       enabled={ctx.dark}
     >
       {ctx.mode}

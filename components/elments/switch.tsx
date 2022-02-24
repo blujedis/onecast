@@ -1,11 +1,13 @@
-import { StyleProp, Switch, ViewStyle, View, StyleSheet } from 'react-native';
-import { FC, ReactNode } from 'react';
+import { FC, PropsWithChildren } from 'react';
+import { Switch, ViewStyle, View, StyleSheet, Platform } from 'react-native';
+import withTheme from '../../theme/withTheme';
 
 export interface ISwitchComponentProps {
   position?: 'top' | 'right' | 'bottom' | 'left';
   fullwidth?: boolean;
   enabled?: boolean;
   style?: ViewStyle;
+  disabled?: boolean;
   onChange?: (value: boolean) => void | Promise<void>;
 }
 
@@ -15,19 +17,26 @@ const stylesheet = StyleSheet.create({
   }
 });
 
-const SwitchComponent: FC<ISwitchComponentProps> = (props: ISwitchComponentProps) => {
+const SwitchComponent = withTheme<PropsWithChildren<ISwitchComponentProps>>((props) => {
 
   props = {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     onChange: () => { },
     style: {},
     position: 'left',
     ...props
   };
 
-  const { position, onChange, enabled, style, fullwidth, children } = props as Required<ISwitchComponentProps> & { children?: ReactNode; };
+  const { position, onChange, enabled, style, fullwidth, children, disabled, theme } = props;
 
   const switchStyle = {
-    ...style
+    ...style,
+  };
+
+  const switchProps = {
+    trackColor: { false: theme?.colors.card, true: theme?.colors.primary },
+    thumbColor: 'white',
+    activeThumbColor: 'white' // needed for web otherwise is green.
   };
 
   const margin = 4;
@@ -43,9 +52,11 @@ const SwitchComponent: FC<ISwitchComponentProps> = (props: ISwitchComponentProps
 
   const component = (
     <Switch
+      {...switchProps}
       style={switchStyle}
       onValueChange={onChange}
       value={enabled}
+      disabled={disabled}
     />
   );
 
@@ -54,10 +65,12 @@ const SwitchComponent: FC<ISwitchComponentProps> = (props: ISwitchComponentProps
 
   const viewStyle: ViewStyle = { ...stylesheet.base };
 
-  if (['top', 'bottom'].includes(position))
-    viewStyle.flexDirection = 'column';
-  else
-    viewStyle.flexDirection = 'row';
+  if (position) {
+    if (['top', 'bottom'].includes(position))
+      viewStyle.flexDirection = 'column';
+    else
+      viewStyle.flexDirection = 'row';
+  }
 
   if (fullwidth) {
     viewStyle.flexGrow = 1;
@@ -80,6 +93,6 @@ const SwitchComponent: FC<ISwitchComponentProps> = (props: ISwitchComponentProps
   );
 
 
-};
+});
 
 export default SwitchComponent;

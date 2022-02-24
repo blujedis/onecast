@@ -1,6 +1,6 @@
-import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ThemeProvider } from './providers/theme';
+import { ThemeProvider } from './providers/context';
+import { RootSiblingParent } from 'react-native-root-siblings';
 
 import useCachedResources from './hooks/useCachedResources';
 import Navigation from './navigation';
@@ -13,13 +13,13 @@ export default function App() {
     return null;
 
   return (
-    <ThemeProvider theme={theme.name} mode={theme.mode}>
-      <SafeAreaProvider>
-        <Navigation />
-        <StatusBar />
-      </SafeAreaProvider>
-    </ThemeProvider>
-
+    <RootSiblingParent>
+      <ThemeProvider theme={theme.name} mode={theme.mode}>
+        <SafeAreaProvider>
+          <Navigation />
+        </SafeAreaProvider>
+      </ThemeProvider>
+    </RootSiblingParent>
   );
 
 }

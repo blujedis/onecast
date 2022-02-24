@@ -2,12 +2,12 @@
  * Learn more about using TypeScript with React Navigation:
  * https://reactnavigation.org/docs/typescript/
  */
-
-import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
+import {  NavigatorScreenParams } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import * as MediaLibrary from 'expo-media-library';
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace ReactNavigation {
     interface RootParamList extends RootStackParamList {}
   }
@@ -23,20 +23,7 @@ export type RootStackScreenProps<Screen extends keyof MainStackParamList> = Nati
 
 export type MainStackParamList = {
   Main: undefined;
+  Library: undefined;
+  Carousel: { item?: MediaLibrary.Asset, items?: MediaLibrary.Asset[], index?: number };
 }
 
-// export type RootStackParamList = {
-//   Root: NavigatorScreenParams<RootTabParamList> | undefined;
-//   Modal: undefined;
-//   NotFound: undefined;
-// };
-
-// export type RootTabParamList = {
-//   TabOne: undefined;
-//   TabTwo: undefined;
-// };
-
-// export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<
-//   BottomTabScreenProps<RootTabParamList, Screen>,
-//   NativeStackScreenProps<RootStackParamList>
-// >;
