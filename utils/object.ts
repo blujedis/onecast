@@ -1,5 +1,18 @@
-import { StyleProp } from 'react-native';
-import merge from 'lodash.merge';
+import { ThemeScheme, Variant } from "../theme";
+
+export type MergeObjectExtend<T extends Record<string, any> = Record<string, any>> = T & {
+  _extend: <E extends Record<string, any>>(obj: E) => MergeObjectExtend<T & E>;
+}
+
+const EXPAND_TUPLES = {
+  margin: ['Top', 'Right', 'Bottom', 'Left'] as const,
+  padding: ['Top', 'Right', 'Bottom', 'Left'] as const,
+  borderColor: ['Top', 'Right', 'Bottom', 'Left'] as const,
+  borderWidth: ['Top', 'Right', 'Bottom', 'Left'] as const,
+  borderRadius: ['TopLeft', 'TopRight', 'BottomRight', 'BottomLeft'] as const
+};
+
+const EXPANDABLE_PROPS = Object.keys(EXPAND_TUPLES);
 
 
 /**
@@ -13,100 +26,13 @@ export function hasOwn<T extends Record<string, unknown>>(obj: T, key: keyof T) 
 }
 
 /**
- * Checks if value is an object.
- *
- * @param value the value to inspect as object.
- */
-export function isObject(value: unknown): value is object {
-  return value !== null && typeof value === 'object';
-}
-
-/**
- * Cleans object removing undefined values. 
- * 
- * @param style the style prop object.
- * @param styles array of style prop objects.
- * @returns object with undefined values removed.
- */
-export function cleanStyles<T = any>(style: StyleProp<T>, ...styles: StyleProp<T>[]): StyleProp<T>[];
-
-/**
- * Cleans object removing undefined values. 
- * 
- * @param styles array of style prop objects.
- * @returns object with undefined values removed.
- */
-export function cleanStyles<T = any>(styles: StyleProp<T>[]): StyleProp<T>[];
-
-export function cleanStyles<T = any>(style: StyleProp<T> | StyleProp<T>[], ...styles: StyleProp<T>[]): StyleProp<T>[] {
-  if (Array.isArray(style))
-    styles = style as StyleProp<T>[];
-  else
-    styles.unshift(style);
-  const filtered = styles
-    .filter(s => {
-      return (s !== null && s !== false && typeof s === 'object');
-    }) as Omit<StyleProp<T>, 'Falsy'>[];
-  return filtered.map(s => {
-    return Object.keys(s).reduce((result, key) => {
-      const val = s[key as keyof typeof s];
-      if (typeof val !== 'undefined')
-        result[key as keyof typeof s] = val;
-      return result;
-    }, {} as any)
-  }) as StyleProp<T>[];
-}
-
-/**
- * Prepares style with base style returning as an array.
- * 
- * @param base the base styles from Stylesheet.create. 
- * @param style a style prop to be cleaned. 
- * @param styles array of style props to be cleaned. 
- * @returns an array of style prop. 
- */
-export function prepareStyles<T = any>(base: Record<string, any> | Record<string, any>[], style: StyleProp<T> | StyleProp<T>[], ...styles: StyleProp<T>[]) {
-  const cleaned = cleanStyles(style, ...styles);
-  base = !Array.isArray(base) ? [base] : base;
-  return [...base as StyleProp<T>[], ...cleaned] as StyleProp<T>[];
-}
-
-/**
- * Merges style objects into single object.
- * 
- * @param base the base style to merge to.
- * @param styles additional styles to merge from.
- * @returns merged style object.
- */
-export function mergeStyles<T extends Record<string, any>>(...styles: StyleProp<T>[]) {
-  const base = styles.shift();
-  const cleaned = cleanStyles(base, ...styles);
-  return merge(cleaned.shift(), ...cleaned);
-}
-
-/**
- * Usses array reduce to assign styles.
- * 
- * @param styles the styles to be assign.
- */
-export function assignStyles<T extends Record<string, unknown>>(...styles: StyleProp<T>[]) {
-  const base = styles.shift();
-  const cleaned = cleanStyles(base, ...styles);
-  return cleaned.reduce((a, c) => {
-    if (isObject(c))
-      a = { ...(a as Record<string, any>), ...(c as Record<string, any>) } as any;
-    return a;
-  }, {} as StyleProp<T>);
-}
-
-/**
  * Iterates a source object if a mapped key exists, replace the key with the new
  * specified mapped key from the map object.
  * 
  * @param source the source object to be remapped.
  * @param map the map to use for mapping to new key names.
  */
-export function remap<T extends Record<string, any> = Record<string, any>>(source: Record<string, any>, map: Record<string, any>) {
+export function remapObject<T extends Record<string, any> = Record<string, any>>(source: Record<string, any>, map = {} as Record<string, any>) {
   const mapKeys = Object.keys(map);
   return Object.keys(source).reduce((a, c) => {
     if (mapKeys.includes(c)) {
@@ -119,3 +45,73 @@ export function remap<T extends Record<string, any> = Record<string, any>>(sourc
     return a;
   }, {} as T);
 }
+
+/**
+ * Iterates through object styles expanding styles defined by arrays.
+ * 
+ * @param obj the object to be exapnded. 
+ */
+export const expandProps = <S extends Record<string, any>>(obj: S) => {
+  for (const k in obj) {
+
+    if (!hasOwn(obj, k)) continue;
+
+    const val = obj[k] as any;
+
+    if (val !== null && !Array.isArray(val) && typeof val === 'object') {
+      obj[k] = expandProps(val);
+    }
+
+    else if (EXPANDABLE_PROPS.includes(k) && Array.isArray(val)) {
+
+      (val as (string | number)[]).forEach((v, i) => {
+        const splitKey = k.replace(/([a-z])([A-Z])/g, '$1 $2').split(' ')
+        const prefix = splitKey[0];
+        const suffix = splitKey[1] || '';
+        const newKey = (prefix + EXPAND_TUPLES[k as keyof typeof EXPAND_TUPLES][i] + suffix) as keyof typeof obj;
+        obj[newKey] = v as any;
+      });
+
+      delete obj[k];
+
+    }
+
+  }
+
+  return obj;
+
+};
+
+/**
+ * Merges source into target object with optional extend for merging other values.
+ * 
+ * @param target the target to merge into.
+ * @param source the source to merge from into target.
+ */
+export const mergeObject = <T extends Record<string, any>, S extends Record<string, any>>(target2: T, source: S) => {
+
+  const target = { ...target2 };
+
+  for (const k in source as S & T) {
+    const val = source[k];
+    if (typeof val === 'object' && val !== null && !Array.isArray(val)) {
+      if (typeof target[k] !== 'undefined' && (Array.isArray(target[k]) || typeof target[k] !== 'object')) {
+        throw new Error(`Invalid target type for source value: "${val}"`);
+      }
+      target[k as keyof typeof target] = mergeObject(target[k] || {}, source[k]);
+    }
+    else {
+      target[k as keyof typeof target] = source[k];
+    }
+  }
+  const result = { ...target } as unknown as MergeObjectExtend<T & S>;
+  
+  Object.defineProperty(result, '_extend', {
+    value: (obj: Record<string, any>) => mergeObject(result, obj),
+    enumerable: false
+  });
+
+  return result;
+}
+
+

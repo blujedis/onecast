@@ -4,8 +4,8 @@ import withTheme from '../theme/withTheme';
 import useMedia from '../hooks/useMedia';
 import { useRef } from 'react';
 import useDimensions from '../hooks/useDimensions';
-import View from './elments/view';
-import Image from './elments/image';
+import View from './elements/box';
+import Image from './elements/image';
 
 export type Asset = MediaLibrary.Asset;
 
@@ -16,6 +16,7 @@ export interface IMediaComponentProps {
   size?: number;
   scrollThreshold?: number;
   showFilters?: boolean;
+  type?: MediaLibrary.MediaTypeValue | MediaLibrary.MediaTypeValue[];
   onSelected?: (item: MediaLibrary.Asset, items: MediaLibrary.Asset[], index?: number) => void;
 }
 
@@ -38,10 +39,11 @@ const MediaComponent = withTheme<IMediaComponentProps>((props) => {
   const adjustedWidth = screen.width - (adjustedColumns * (props.margin as number));
   props.size = adjustedWidth / (props.columns as number);
 
-  const { margin, pageSize, columns, size, scrollThreshold, onSelected } = props;
+  const { margin, pageSize, columns, size, scrollThreshold, onSelected, type } = props;
+  const mediaType = type && !Array.isArray(type) ? [type] : type;
 
   const listRef = useRef<FlatList<MediaLibrary.Asset> | null>(null);
-  const media = useMedia({ first: pageSize });
+  const media = useMedia({ first: pageSize, mediaType });
 
   const keyExtractor = (item: MediaLibrary.Asset) => item.id;
   const renderItem = (itemProps: ListRenderItemInfo<MediaLibrary.Asset>) => {
@@ -63,7 +65,7 @@ const MediaComponent = withTheme<IMediaComponentProps>((props) => {
   };
 
   return (
-    <View style={{ marginTop: margin }}>
+    <View marginTop={margin}>
       <FlatList
         ref={listRef}
         style={{ flexGrow: 1 }}

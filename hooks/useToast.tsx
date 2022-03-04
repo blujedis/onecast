@@ -3,7 +3,7 @@
 import Toast, { ToastProps } from 'react-native-root-toast';
 import { Theme } from '../theme';
 import { useTheme } from '../providers/context';
-import { remap } from '../utils/object';
+import { remapObject } from '../utils/object';
 import { useState } from 'react';
 
 type VariantKey = keyof Theme['toast'];
@@ -86,7 +86,7 @@ const useToast = (props = {} as IUseToastProps) => {
     });
 
     const variantOptions =
-      remap<ToastProps>(theme.toast[variant || variantKey as VariantKey], VARIANT_MAP);
+      remapObject<ToastProps>(theme.toast[variant || variantKey as VariantKey], VARIANT_MAP);
 
     const options = {
       ...actionOptions,

@@ -1,17 +1,18 @@
-import { RootStackScreenProps } from '../../navigation/types';
-import Container from '../../components/elments/container';
-import MediaComponent from '../../components/media';
+import { MainStackScreenProps } from '../../navigation/types';
+import Box from '../../components/elements/box';
+import Media from '../../components/media';
 
-const LibraryScreen = ({ navigation }: RootStackScreenProps<'Main'>) => {
+const LibraryScreen = ({ navigation, route }: MainStackScreenProps<'Library'>) => {
+
+  const type = route.params.type;
 
   return (
-    <Container>
-      <MediaComponent onSelected={(item, items, index) => {
+    <Box>
+      <Media type={type} onSelected={(item, items, index) => {
         navigation.navigate('Carousel', { item, items, index });
       }} />
-    </Container>
+    </Box>
   );
-
 };
 
 export default LibraryScreen;

@@ -1,11 +1,13 @@
 import Toast, { ToastProps } from 'react-native-root-toast';
 import { Theme } from '../theme';
 import withTheme, { ThemedProps } from '../theme/withTheme';
-import Text from './elments/text';
+import Text from './elements/text';
+
+type ToastVariant = Theme['schemes'];
 
 export interface IToastComponentProps extends Omit<ToastProps, 'textColor' | 'backgroundColor'> {
   message: string;
-  variant?: keyof Theme['toast']
+  variant?: keyof ToastVariant
 }
 
 const ToastComponent = withTheme<IToastComponentProps>((props) => {
@@ -22,7 +24,7 @@ const ToastComponent = withTheme<IToastComponentProps>((props) => {
 
   const { children, theme, variant: variantKey, ...rest } = props as Required<ThemedProps<IToastComponentProps>>;
 
-  const variant = theme?.toast[variantKey];
+  const variant = theme?.schemes[variantKey];
 
   return (
     <Toast {...rest}>

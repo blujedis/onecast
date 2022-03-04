@@ -1,6 +1,6 @@
 import withTheme, { ThemedProps } from '../theme/withTheme';
-import Text from './elments/text';
-import View from './elments/view';
+import Text from './elements/text';
+import View from './elements/box';
 
 export interface IFieldComponentProps {
   strategy?: 'top' | 'right' | 'bottom' | 'left';

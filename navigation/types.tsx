@@ -14,16 +14,18 @@ declare global {
 }
 
 export type RootStackParamList = {
-  Root: NavigatorScreenParams<MainStackParamList> | undefined;
+  Main: NavigatorScreenParams<MainStackParamList> | undefined;
   Modal: undefined;
   NotFound: undefined;
+  Examples: undefined;
 };
 
-export type RootStackScreenProps<Screen extends keyof MainStackParamList> = NativeStackScreenProps<MainStackParamList, Screen>;
+export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, Screen>;
 
 export type MainStackParamList = {
-  Main: undefined;
-  Library: undefined;
+  Home: undefined;
+  Library: { type: 'photo' | 'video' };
   Carousel: { item?: MediaLibrary.Asset, items?: MediaLibrary.Asset[], index?: number };
 }
 
+export type MainStackScreenProps<Screen extends keyof MainStackParamList> = NativeStackScreenProps<MainStackParamList, Screen>;

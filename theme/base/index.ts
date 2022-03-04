@@ -1,14 +1,14 @@
-import colors from './colors';
-import size from './size';
-
-export type ThemeBase = typeof theme;
+import common from './common';
+import components from './components';
+import schemes from './schemes';
+import { expandProps } from '../../utils/object';
 
 const theme = {
-  page: {
-    margin: 0,
-    padding: 0,
-  },
-  colors,
-  ...size
+  ...common,
+  ...components,
+  schemes
 };
-export default theme;
+
+const expanded = expandProps(theme);
+
+export default expanded;

@@ -52,7 +52,6 @@ export default function useCachedResources() {
         if (storageTheme && storageTheme.mode !== deviceScheme && storageTheme.deviceMode !== deviceScheme)
           loadedTheme.mode = deviceScheme;
 
-
         // Update the theme in storage.
         await storage.set('theme', loadedTheme);
         setTheme(loadedTheme);

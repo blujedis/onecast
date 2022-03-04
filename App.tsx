@@ -1,7 +1,6 @@
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from './providers/context';
 import { RootSiblingParent } from 'react-native-root-siblings';
-
 import useCachedResources from './hooks/useCachedResources';
 import Navigation from './navigation';
 

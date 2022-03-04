@@ -1,4 +1,4 @@
-import { createContext, FC, useContext, useState } from 'react';
+import { createContext, FC, useContext as useReactContext, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import { ThemeName, Theme } from '../theme';
 import { getTheme } from '../theme';
@@ -6,12 +6,15 @@ import useStorage from '../hooks/useStorage';
 
 export type ThemeMode = 'light' | 'dark';
 
+export type CastType = 'chromecast' | 'airplay';
+
 export interface IContext {
   theme: Theme;
   setThemeMode: (mode: ThemeMode) => void;
   setTheme: (name: ThemeName, mode?: ThemeMode) => void;
-  // showToast: (message: string, variant?: any) => void;
-  // hideToast: () => void;
+  cast: undefined | null | { type: CastType, uri: string };
+  setCast: (type?: CastType, uri?: string) => void;
+  updateCast: (uri: string) => void;
 }
 
 export interface IContextOptions {
@@ -36,11 +39,14 @@ const ThemeProvider: FC<IContextOptions> = ({ theme: themeName, mode, children }
   const storage = useStorage();
 
   const [theme, setTheme] = useState({ name: initName, mode: initMode });
-  // const [toast, setToast] = useState({ } as {visible: boolean, message: string, variant?: string})
+  const [cast, setCast] = useState(null as null | undefined | { type: CastType, uri: string });
 
   const context: IContext = {
     get theme() {
-      return getTheme(theme.name, theme.mode) as any;
+      return getTheme(theme.name, theme.mode);
+    },
+    get cast() {
+      return cast;
     },
     setThemeMode: (mode) => {
       const newTheme = { name: theme.name, mode, deviceMode };
@@ -51,6 +57,16 @@ const ThemeProvider: FC<IContextOptions> = ({ theme: themeName, mode, children }
       const newTheme = { ...theme, name, mode, deviceMode }
       setTheme(newTheme);
       storage.set('theme', newTheme);
+    },
+    setCast: (type?: CastType, uri?: string) => {
+      if (type && uri)
+        setCast({ type, uri })
+      else
+        setCast(null);
+    },
+    updateCast: (uri: string) => {
+      if (cast && cast.type)
+        setCast({ ...cast, uri });
     }
   };
 
@@ -62,14 +78,14 @@ const ThemeProvider: FC<IContextOptions> = ({ theme: themeName, mode, children }
 
 };
 
-const useThemeContext = () => useContext(Context);
+const useContext = () => useReactContext(Context);
 
 const useTheme = () => {
-  return useThemeContext().theme;
+  return useContext().theme;
 }
 
 export {
   ThemeProvider,
-  useThemeContext,
+  useContext,
   useTheme
 };

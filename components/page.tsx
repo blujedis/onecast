@@ -1,22 +1,29 @@
 import withTheme from '../theme/withTheme';
-import Container, { IContainerProps } from './elments/container';
+import Box, { IBoxComponentProps } from './elements/box';
 
-export interface IPageComponentProps extends IContainerProps { }
+export interface IPageComponentProps extends IBoxComponentProps { }
 
 const PageComponent = withTheme<IPageComponentProps>((props) => {
 
   props = {
-    margin: props.theme?.page.margin,
-    padding: props.theme?.page.padding,
+    flex: 1,
+    justifyContent: 'flex-start',
     ...props
   };
 
   const { theme, children, ...rest } = props;
 
+  const pageStyles = theme?.page;
+
+  const boxStyles = {
+    ...pageStyles,
+    ...rest
+  };
+
   return (
-    <Container {...rest}>
+    <Box {...boxStyles}>
       {children}
-    </Container>
+    </Box>
   );
 
 });

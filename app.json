@@ -1,4 +1,5 @@
 {
+  "name": "onecast",
   "expo": {
     "name": "onecast",
     "slug": "onecast",
@@ -44,6 +45,5 @@
       ]
     ],
     "sdkVersion": "44.0.0"
-  },
-  "name": "onecast"
+  }
 }

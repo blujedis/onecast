@@ -1,37 +1,43 @@
-import Color from 'color';
+import { mergeObject } from '../utils/object';
+import { Theme, ThemeMode } from './types';
+import type { ThemeName } from './';
 
-export type ColorParams = Parameters<typeof Color>;
 
-const toColor = (...params: ColorParams) => Color(...params);
-
-function asColor(color: string | Color, model?: ColorParams[1]) {
-  let result = color as Color;
-  if (typeof color === 'string')
-    result = toColor(color, model);
+const getTheme = (theme: ThemeName, mode: 'light' | 'dark') => {
+  const result = {
+    name: theme,
+    dark: mode === 'dark',
+    mode,
+    ...themes[theme][mode]
+  };
   return result;
 };
 
-function lighten(color: string | Color, value: number) {
-  const clr = asColor(color);
-  return clr.lighten(value).toString()
+
+
+const extendTheme = <T extends Theme, E extends Partial<Theme> & Record<string, any>>(theme: T, extend: E) => {
+  return mergeObject(theme, extend);
 };
 
-function darken(color: string | Color, value: number) {
-  const clr = asColor(color);
-  return clr.darken(value).toString();
+/**
+ * Expands a style object from theme breaking out into schemes, variants and base styles.
+ * 
+ * @param obj the styles object to expand.
+ */
+export const expandStyles = <S extends Record<string, any>>(obj = {} as S, scheme?: keyof S['schemes'], variant?: keyof S['variants']) => {
+  obj = {
+    variants: {} as Record<string, any>,
+    ...obj
+  };
+  const { schemes, variants, ...base } = obj as Required<S>;
+  const _scheme = (obj.schemes || {})[scheme as string] || {};
+  const _variant = (obj.variants || {})[variant as string] || {};
+  return {
+    schemes,
+    variants,
+    scheme: _scheme,
+    variant: _variant,
+    base
+  };
 };
 
-function opacity(color: string | Color, value: number) {
-  const clr = asColor(color);
-  return clr.alpha(value).toString();
-};
-
-
-const utils = {
-  asColor,
-  lighten,
-  darken,
-  opacity
-};
-
-export default utils;

@@ -1,5 +1,7 @@
+import { DefaultTheme } from '@react-navigation/native';
 
-const colors = {
+let colors = {
+
   transparent: 'transparent',
   black: '#000000',
   white: '#ffffff',
@@ -267,7 +269,7 @@ const colors = {
   rose700: '#be123c',
   rose800: '#9f1239',
   rose900: '#881337',
-  
+
   brown: '#795548',
   brown50: '#efebe9',
   brown100: '#d7ccc8',
@@ -278,8 +280,68 @@ const colors = {
   brown600: '#6d4c41',
   brown700: '#5d4037',
   brown800: '#4e342e',
-  brown900: '#3e2723'
-  
+  brown900: '#3e2723',
+
+  carbon: '#696482',
+  carbon50: '#f1f1f2',
+  carbon100: '#d5d4de',
+  carbon200: '#bab7c8',
+  carbon300: '#9e9ab1',
+  carbon400: '#827d9b',
+  carbon500: '#696482',
+  carbon600: '#514e65',
+  carbon700: '#3a3748',
+  carbon800: '#201f28',
+  carbon900: '#131218',
+
+  ...DefaultTheme.colors,
 };
 
-export default colors;
+colors = {
+  ...colors,
+  text: colors.slate700,
+  card: colors.slate100,
+  notification: colors.rose600,
+  background: colors.slate50,
+  border: colors.slate200,
+  primary: colors.indigo600,
+};
+
+const size = {
+  none: 0,
+  xs: 4,
+  sm: 8,
+  nm: 12,
+  md: 18,
+  lg: 22,
+  xl: 26,
+  x2l: 30,
+  x3l: 34,
+  x4l: 38,
+  x5l: 42,
+  x6l: 46,
+  x7l: 50,
+  x8l: 54,
+  x9l: 58
+};
+
+const font = {
+  fontSize: 16,
+  fontFamily: undefined,
+  fontStyle: 'normal',
+  fontWeight: 'normal',
+  fontVariant: undefined
+};
+
+const global = {
+  elementHeight: 50
+};
+
+const common = {
+  global,
+  size,
+  colors,
+  font
+};
+
+export default common;

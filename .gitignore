@@ -13,3 +13,5 @@ web-build/
 # macOS
 .DS_Store
 temp.js
+temp.mjs
+temp.txt
