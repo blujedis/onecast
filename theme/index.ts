@@ -5,11 +5,7 @@ export type ThemeName = keyof typeof themes;
 const themes = {
   default: defaultTheme
 };
-
-
-
-
-
+ 
 export {
   ThemeName,
   themes,
