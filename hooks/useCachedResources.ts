@@ -2,26 +2,13 @@ import { FontAwesome } from '@expo/vector-icons';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
-import { ThemeName } from '../theme';
-import { useColorScheme } from 'react-native';
-import useStorage from './useStorage';
-import { ThemeMode } from '../providers/context';
-
-interface CacheStore {
-  theme: { name: ThemeName; mode: ThemeMode, deviceMode: ThemeMode };
-}
+import { useStoredTheme } from '../.tmp/pureact-final';
 
 export default function useCachedResources() {
 
-  const storage = useStorage<CacheStore>();
-  const deviceScheme = useColorScheme() as ThemeMode;
-
+  const storedTheme = useStoredTheme('theme');
   const [initialized, setInitizlized] = useState(false);
-  const [theme, setTheme] = useState({
-    name: 'default' as ThemeName,
-    mode: deviceScheme as ThemeMode,
-    deviceMode: deviceScheme
-  });
+  const [initTheme, setInitTheme] = useState(storedTheme.default);
 
   // Load any resources or data that we need prior to rendering the app
   useEffect(() => {
@@ -38,23 +25,8 @@ export default function useCachedResources() {
           'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
         });
 
-        // Get the stored theme.
-        const storageTheme = await storage.get('theme');
-
-        const loadedTheme = (storageTheme
-          ? { ...theme, ...storageTheme }
-          : { ...theme, name: 'default', mode: deviceScheme }) as CacheStore['theme'];
-
-        // Color mode has changed at the device level 
-        // update to match that change, we track the deviceScheme or
-        // mode between inits so as not to override user preference
-        // for ex: device is in dark mode but user wants light.
-        if (storageTheme && storageTheme.mode !== deviceScheme && storageTheme.deviceMode !== deviceScheme)
-          loadedTheme.mode = deviceScheme;
-
-        // Update the theme in storage.
-        await storage.set('theme', loadedTheme);
-        setTheme(loadedTheme);
+        const config = await storedTheme.init();
+        setInitTheme(config);
 
       }
 
@@ -75,5 +47,6 @@ export default function useCachedResources() {
 
   }, []);
 
-  return { initialized, theme };
+  return { initialized, storedTheme: initTheme };
+
 }

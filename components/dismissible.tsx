@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 
 export const Dismissible = ({ children }: { children: any }) => {

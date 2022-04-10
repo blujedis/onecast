@@ -1,5 +1,5 @@
 import { MainStackScreenProps } from '../../navigation/types';
-import Box from '../../components/elements/box';
+import { View } from 'react-native';
 import Media from '../../components/media';
 
 const LibraryScreen = ({ navigation, route }: MainStackScreenProps<'Library'>) => {
@@ -7,11 +7,11 @@ const LibraryScreen = ({ navigation, route }: MainStackScreenProps<'Library'>) =
   const type = route.params.type;
 
   return (
-    <Box>
+    <View>
       <Media type={type} onSelected={(item, items, index) => {
         navigation.navigate('Carousel', { item, items, index });
       }} />
-    </Box>
+    </View>
   );
 };
 

@@ -28,7 +28,6 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#17161e"
       },
-      "permissions": [],
       "package": "com.blujedi.onecast"
     },
     "web": {

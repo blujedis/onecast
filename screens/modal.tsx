@@ -1,6 +1,4 @@
-import { StyleSheet } from 'react-native';
-import View from '../components/elements/view';
-import Text from '../components/elements/text';
+import { StyleSheet, View, Text } from 'react-native';
 
 export default function ModalScreen() {
   return (

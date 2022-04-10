@@ -1,4 +1,4 @@
-import { ThemeScheme, Variant } from "../theme";
+import { ThemeScheme, Variant } from "../providers/theme";
 
 export type MergeObjectExtend<T extends Record<string, any> = Record<string, any>> = T & {
   _extend: <E extends Record<string, any>>(obj: E) => MergeObjectExtend<T & E>;

@@ -7,7 +7,7 @@ import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MainStackParamList, RootStackParamList } from './types';
-import { useTheme } from '../providers/context';
+import { useTheme } from '../providers/theme';
 
 import MainScreen from '../screens/main';
 import LibraryScreen from '../screens/main/library';
@@ -17,18 +17,21 @@ import ExamplesScreen from '../screens/examples';
 import NotFoundScreen from '../screens/404';
 
 import linking from './linking';
+import { IStoredTheme } from '../hooks/useStoredTheme';
 
 const MainStack = createNativeStackNavigator<MainStackParamList>();
 
 function MainStackNavigator() {
 
-  const theme = useTheme();
+  // const themer = useTheme();
+  // const isDark = themer.mode === 'dark';
+  // const theme = themer.theme;
 
   return (
     <MainStack.Navigator
       initialRouteName='Home'
       screenOptions={{
-        headerTintColor: theme.dark ? theme.colors.white : theme.colors.slate700
+        // headerTintColor: isDark ? theme.colors.white : theme.colors.black
       }}
     >
       <MainStack.Screen
@@ -72,15 +75,27 @@ function RootNavigator() {
 }
 
 export default function Navigation() {
-  const theme = useTheme();
-  const barStyle = theme.mode === 'dark' ? 'light' : 'dark';
+
+  const { current } = useTheme();
+  const barStyle = current.dark ? 'light' : 'dark';
+
+  const navTheme = {
+    dark: current.dark,
+    colors: {
+      ...current.colors,
+      primary: current.COLORS.PRIMARY,
+      text: '#fff'
+    }
+  };
+
   return (
     <NavigationContainer
       linking={linking}
-      theme={theme}
+      theme={navTheme}
     >
       <StatusBar style={barStyle} />
       <RootNavigator />
     </NavigationContainer>
   );
+
 }

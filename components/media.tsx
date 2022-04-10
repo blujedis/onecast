@@ -1,11 +1,9 @@
-import { FlatList, ListRenderItemInfo } from 'react-native';
+import { useRef, FC } from 'react';
+import { FlatList, ListRenderItemInfo, View } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
-import withTheme from '../theme/withTheme';
 import useMedia from '../hooks/useMedia';
-import { useRef } from 'react';
 import useDimensions from '../hooks/useDimensions';
-import View from './elements/box';
-import Image from './elements/image';
+import Image from './image';
 
 export type Asset = MediaLibrary.Asset;
 
@@ -24,7 +22,7 @@ export type OnEndHandler = ((info: {
   distanceFromEnd: number;
 }) => void) | null | undefined;
 
-const MediaComponent = withTheme<IMediaComponentProps>((props) => {
+const MediaComponent: FC<IMediaComponentProps> = ((props) => {
 
   props = {
     columns: 3,
@@ -65,7 +63,7 @@ const MediaComponent = withTheme<IMediaComponentProps>((props) => {
   };
 
   return (
-    <View marginTop={margin}>
+    <View style={{ marginTop: margin}}>
       <FlatList
         ref={listRef}
         style={{ flexGrow: 1 }}

@@ -1,9 +1,9 @@
-import withTheme from '../theme/withTheme';
-import Box, { IBoxComponentProps } from './elements/box';
+import { FC } from 'react';
+import { View, ViewStyle } from 'react-native';
 
-export interface IPageComponentProps extends IBoxComponentProps { }
+export interface IPageComponentProps extends ViewStyle { }
 
-const PageComponent = withTheme<IPageComponentProps>((props) => {
+const PageComponent: FC<IPageComponentProps> = ((props) => {
 
   props = {
     flex: 1,
@@ -11,19 +11,16 @@ const PageComponent = withTheme<IPageComponentProps>((props) => {
     ...props
   };
 
-  const { theme, children, ...rest } = props;
-
-  const pageStyles = theme?.page;
+  const { children, ...rest } = props;
 
   const boxStyles = {
-    ...pageStyles,
     ...rest
   };
 
   return (
-    <Box {...boxStyles}>
+    <View {...boxStyles}>
       {children}
-    </Box>
+    </View>
   );
 
 });
