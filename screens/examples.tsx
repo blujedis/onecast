@@ -1,7 +1,7 @@
 import { RootStackScreenProps } from '../navigation/types';
 import Page from '../components/page';
 
-import { Block, Text } from 'galio-framework';
+import { Block, Button, Text } from 'galio-framework';
 
 const ExampleScreen = ({ navigation }: RootStackScreenProps<'Examples'>) => {
 
@@ -19,6 +19,7 @@ const ExampleScreen = ({ navigation }: RootStackScreenProps<'Examples'>) => {
     <Page>
       <Block fluid>
         <Text h6>hello</Text>
+        <Button>Click</Button>
       </Block>
       {/* <Switch onValueChange={changeTheme} value={theme.current.dark}/> */}
     </Page>

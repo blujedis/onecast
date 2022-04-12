@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 // import { GalioProvider, useGalioTheme, theme as galioTheme } from 'galio-framework';
-import { GalioProvider } from 'galio-framework';
+import { GalioProvider, theme as galioTheme } from 'galio-framework';
 
 import { DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { mergeObject, palette } from '../utils';
@@ -20,16 +20,6 @@ export interface IThemeContext {
   toggle: () => void;
   setTheme: (theme: RecursivePartial<Theme>) => void
 }
-
-// export const schemes = {
-//   default: palette.slate200 as ColorName,
-//   primary: palette.indigo600 as ColorName,
-//   secondary: palette.carbon600 as ColorName,
-//   danger: palette.rose600 as ColorName,
-//   warning: palette.yellow600 as ColorName,
-//   info: palette.sky600 as ColorName,
-//   success: palette.emerald600 as ColorName,
-// };
 
 const navThemeLight = {
   ...DefaultTheme,
@@ -52,10 +42,6 @@ const navThemeDark = {
   muted: palette.carbon800
 };
 
-const colorsDark = {
-  ...galioTheme.COLORS
-};
-
 const defaultTheme = mergeObject(galioTheme, {
   dark: false,
   colors: {
@@ -70,6 +56,7 @@ const defaultTheme = mergeObject(galioTheme, {
   }
 });
 
+
 const getTheme = (mode: ThemeMode) => {
   if (mode === 'light') return defaultTheme as Theme;
   return {
@@ -77,7 +64,8 @@ const getTheme = (mode: ThemeMode) => {
     dark: true,
     colors: navThemeDark,
     COLORS: {
-      ...galioTheme.COLORS
+      ...galioTheme.COLORS,
+      BODY: '#fff'
     }
   } as Theme;
 };
@@ -119,3 +107,13 @@ export {
   ThemeProvider,
   useTheme
 };
+
+// export const schemes = {
+//   default: palette.slate200 as ColorName,
+//   primary: palette.indigo600 as ColorName,
+//   secondary: palette.carbon600 as ColorName,
+//   danger: palette.rose600 as ColorName,
+//   warning: palette.yellow600 as ColorName,
+//   info: palette.sky600 as ColorName,
+//   success: palette.emerald600 as ColorName,
+// };
